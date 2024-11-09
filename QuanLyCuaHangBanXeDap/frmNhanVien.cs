@@ -15,7 +15,7 @@ namespace QuanLyCuaHangBanXeDap
     {
         private int selectedNhanVienId;
         SqlConnection conn;
-        private string connectSQL = "Data Source=T4DEPTRAI\\SQLEXPRESS;Initial Catalog=QuanLyCuaHangXeDap;Integrated Security=True;TrustServerCertificate=True";
+        private string connectSQL = "Data Source=LEVANQUYEN\\SQLEXPRESS;Initial Catalog=QuanLyCuaHangXeDap;Integrated Security=True;";
         private void openConnect()
         {
             conn = new SqlConnection(connectSQL);
