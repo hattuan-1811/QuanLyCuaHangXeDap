@@ -268,5 +268,10 @@ namespace QuanLyCuaHangBanXeDap
             pictureBox1.Image = null;
             selectedNhanVienId = -1;
         }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 }
