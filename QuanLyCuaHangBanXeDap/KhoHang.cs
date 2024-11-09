@@ -25,14 +25,17 @@ namespace QuanLyCuaHangBanXeDap
 
         private void LoadData()
         {
+            dal.openConnect();
             string query = "SELECT * FROM KhoHang";
             DataTable dt = dal.ExecuteQuery(query);
             dataGridView1.DataSource = dt;
+            dal.closeConnect();
         }
 
         private void KhoHang_Load(object sender, EventArgs e)
         {
             LoadData();
+     
         }
         private void ClearFields()
         {
@@ -42,40 +45,63 @@ namespace QuanLyCuaHangBanXeDap
         }
     private void button1_Click(object sender, EventArgs e)
         {
-            string tenkhohang = textBox1.Text;
-            string diachi = textBox2.Text;
-
-            if (string.IsNullOrEmpty(tenkhohang) || string.IsNullOrEmpty(diachi))
+            try
             {
-                MessageBox.Show("Vui lòng nhập đầy đủ.");
-                return;
+                string tenkhohang = textBox1.Text;
+                string diachi = textBox2.Text;
+
+                if (string.IsNullOrEmpty(tenkhohang) || string.IsNullOrEmpty(diachi))
+                {
+                    MessageBox.Show("Vui lòng nhập đầy đủ.");
+                    return;
+                }
+                string query = $"INSERT INTO KhoHang (TenKho, DiaChi) " +
+                              $"VALUES (N'{tenkhohang}', N'{diachi}')";
+                dal.ExecuteNonQuery(query);
+                MessageBox.Show("Thêm Sản phẩm thành công ", "Thông báo");
+                LoadData();
+                ClearFields();
             }
-            string query = $"INSERT INTO KhoHang (TenKho, DiaChi) " +
-                          $"VALUES (N'{tenkhohang}', N'{diachi}')";
-            dal.ExecuteNonQuery(query);
-            MessageBox.Show("Thêm Sản phẩm thành công ", "Thông báo");
-            LoadData();
-            ClearFields();
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi: " + ex.Message);
+            }
+            finally
+            {
+                dal.closeConnect();
+            }
+
 
 
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string tenkhohang = textBox1.Text;
-            string diachi = textBox2.Text;
-            int khohangID = Convert.ToInt32(dataGridView1.CurrentRow.Cells["KhoHangID"].Value);
-            if (dataGridView1.CurrentRow == null)
+            try
             {
-                MessageBox.Show("Vui lòng chọn sản phẩm để sửa.");
-                return;
+                string tenkhohang = textBox1.Text;
+                string diachi = textBox2.Text;
+                int khohangID = Convert.ToInt32(dataGridView1.CurrentRow.Cells["KhoHangID"].Value);
+                if (dataGridView1.CurrentRow == null)
+                {
+                    MessageBox.Show("Vui lòng chọn sản phẩm để sửa.");
+                    return;
+                }
+                string query = $"UPDATE KhoHang SET TenKho = N'{tenkhohang}', DiaChi = N'{diachi}'" +
+                               $"WHERE KhoHangID = {khohangID}";
+                dal.ExecuteNonQuery(query);
+                MessageBox.Show("Sửa Sản phẩm thành công ", "Thông báo");
+                LoadData();
+                ClearFields();
             }
-            string query = $"UPDATE KhoHang SET TenKho = N'{tenkhohang}', DiaChi = N'{diachi}'"+
-                           $"WHERE KhoHangID = {khohangID}";
-            dal.ExecuteNonQuery(query);
-            MessageBox.Show("Sửa Sản phẩm thành công ", "Thông báo");
-            LoadData();
-            ClearFields();
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi: " + ex.Message);
+            }
+            finally
+            {
+                dal.closeConnect();
+            }
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -96,35 +122,41 @@ namespace QuanLyCuaHangBanXeDap
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count==0)
-            {
-                MessageBox.Show("Vui lòng chọn sản phẩm để xóa.");
-                return;
-            }
-
-            if (!int.TryParse(dataGridView1.CurrentRow.Cells["KhoHangID"].Value.ToString(), out int khoHangID))
-            {
-                MessageBox.Show("ID sản phẩm không hợp lệ.", "Lỗi");
-                return;
-            }
-
-            // Xây dựng câu truy vấn xóa với tham số `KhoHangID`
-            string query = $"DELETE FROM KhoHang WHERE KhoHangID = {khoHangID}";
-
             try
             {
-                dal.ExecuteNonQuery(query);
-                MessageBox.Show("Xóa sản phẩm thành công", "Thông báo");
-                LoadData();
-                ClearFields();
+                if (dataGridView1.SelectedRows.Count == 0)
+                {
+                    MessageBox.Show("Vui lòng chọn sản phẩm để xóa.");
+                    return;
+                }
+
+                if (!int.TryParse(dataGridView1.CurrentRow.Cells["KhoHangID"].Value.ToString(), out int khoHangID))
+                {
+                    MessageBox.Show("ID sản phẩm không hợp lệ.", "Lỗi");
+                    return;
+                }
+
+              
+                string query = $"DELETE FROM KhoHang WHERE KhoHangID = {khoHangID}";
+
+               
+                    dal.ExecuteNonQuery(query);
+                    MessageBox.Show("Xóa sản phẩm thành công", "Thông báo");
+                    LoadData();
+                    ClearFields();
+               
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Có lỗi xảy ra: " + ex.Message, "Lỗi");
+                MessageBox.Show("Lỗi: " + ex.Message);
+            }
+            finally
+            {
+                dal.closeConnect();
             }
 
 
-        }
+            }
     }
   
 }

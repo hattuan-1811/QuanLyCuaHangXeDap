@@ -22,23 +22,29 @@ namespace QuanLyCuaHangBanXeDap
         }
         private void LoadData()
         {
+            dal.openConnect();
             string query = "SELECT * FROM SanPham";
             DataTable dt = dal.ExecuteQuery(query);
             dataGridView1.DataSource = dt;
+            dal.closeConnect();
         }
 
         private void Sanpham_Load(object sender, EventArgs e)
         {
+           
             LoadData();
             LoadKhoHang();
+            
         }
         private void LoadKhoHang()
         {
+            dal.openConnect();
             string query = "SELECT KhoHangID, TenKho FROM KhoHang";
             DataTable dt = dal.ExecuteQuery(query);
             comboBox1.DataSource = dt;
             comboBox1.DisplayMember = "TenKho";
             comboBox1.ValueMember = "KhoHangID";
+            dal.closeConnect();
         }
 
         private void groupBox1_Enter(object sender, EventArgs e)
@@ -72,49 +78,59 @@ namespace QuanLyCuaHangBanXeDap
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string tenSanPham = textBox1.Text;
-            string loaiSanPham = textBox2.Text;
-            decimal giaBan;
-            if (!decimal.TryParse(textBox3.Text, out giaBan))
+            try
             {
-                MessageBox.Show("Giá bán không hợp lệ.");
-                return;
+                dal.openConnect(); 
+
+                string tenSanPham = textBox1.Text;
+                string loaiSanPham = textBox2.Text;
+                if (!decimal.TryParse(textBox3.Text, out decimal giaBan))
+                {
+                    MessageBox.Show("Giá bán không hợp lệ.");
+                    return;
+                }
+                string mauSac = textBox4.Text;
+                string kichThuoc = textBox6.Text;
+                if (!int.TryParse(textBox5.Text, out int soLuongTon))
+                {
+                    MessageBox.Show("Số lượng tồn không hợp lệ.");
+                    return;
+                }
+                int khoHangID = Convert.ToInt32(comboBox1.SelectedValue);
+
+                if (string.IsNullOrEmpty(hinhAnhPath))
+                {
+                    MessageBox.Show("Vui lòng chọn hình ảnh cho sản phẩm.");
+                    return;
+                }
+
+                string imagesDirectory = Path.Combine(Application.StartupPath, "Images");
+                if (!Directory.Exists(imagesDirectory))
+                {
+                    Directory.CreateDirectory(imagesDirectory);
+                }
+                string fileName = Path.GetFileName(hinhAnhPath);
+                string destPath = Path.Combine(imagesDirectory, fileName);
+                File.Copy(hinhAnhPath, destPath, true);
+
+                string relativePath = Path.Combine("Images", fileName);
+
+                string query = $"INSERT INTO SanPham (TenSanPham, LoaiSanPham, GiaBan, MauSac, KichThuoc, KhoHangID, SoLuongTon, HinhAnh) " +
+                               $"VALUES (N'{tenSanPham}', N'{loaiSanPham}', {giaBan}, N'{mauSac}', N'{kichThuoc}', {khoHangID}, {soLuongTon}, N'{relativePath}')";
+
+                dal.ExecuteNonQuery(query); // Thực hiện truy vấn
+                MessageBox.Show("Thêm Sản phẩm thành công ", "Thông báo");
+                LoadData();
+                ClearFields();
             }
-            string mauSac = textBox4.Text;
-            string kichThuoc = textBox6.Text;
-            int soLuongTon;
-            if (!int.TryParse(textBox5.Text, out soLuongTon))
+            catch (Exception ex)
             {
-                MessageBox.Show("Số lượng tồn không hợp lệ.");
-                return;
+                MessageBox.Show("Lỗi: " + ex.Message);
             }
-            int khoHangID = Convert.ToInt32(comboBox1.SelectedValue);
-
-            if (string.IsNullOrEmpty(hinhAnhPath))
+            finally
             {
-                MessageBox.Show("Vui lòng chọn hình ảnh cho sản phẩm.");
-                return;
+                dal.closeConnect(); 
             }
-
-      
-            string imagesDirectory = Path.Combine(Application.StartupPath, "Images");
-            if (!Directory.Exists(imagesDirectory))
-            {
-                Directory.CreateDirectory(imagesDirectory);
-            }
-            string fileName = Path.GetFileName(hinhAnhPath);
-            string destPath = Path.Combine(imagesDirectory, fileName);
-            File.Copy(hinhAnhPath, destPath, true);
-
-     
-            string relativePath = Path.Combine("Images", fileName);
-
-            string query = $"INSERT INTO SanPham (TenSanPham, LoaiSanPham, GiaBan, MauSac, KichThuoc, KhoHangID, SoLuongTon, HinhAnh) " +
-                           $"VALUES (N'{tenSanPham}', N'{loaiSanPham}', {giaBan}, N'{mauSac}', N'{kichThuoc}', {khoHangID}, {soLuongTon}, N'{relativePath}')";
-            dal.ExecuteNonQuery(query);
-            MessageBox.Show("Thêm Sản phẩm thành công ", "Thông báo");
-            LoadData();
-            ClearFields();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -125,55 +141,63 @@ namespace QuanLyCuaHangBanXeDap
                 return;
             }
 
-            int sanPhamID = Convert.ToInt32(dataGridView1.CurrentRow.Cells["SanPhamID"].Value);
-            string tenSanPham = textBox1.Text;
-            string loaiSanPham = textBox2.Text;
-            decimal giaBan;
-            if (!decimal.TryParse(textBox3.Text, out giaBan))
+            try
             {
-                MessageBox.Show("Giá bán không hợp lệ.");
-                return;
-            }
-            string mauSac = textBox4.Text;
-            string kichThuoc = textBox6.Text;
-            int soLuongTon;
-            if (!int.TryParse(textBox5.Text, out soLuongTon))
-            {
-                MessageBox.Show("Số lượng tồn không hợp lệ.");
-                return;
-            }
-            int khoHangID = Convert.ToInt32(comboBox1.SelectedValue);
+                dal.openConnect(); 
 
-        
-            string relativePath;
-            if (!string.IsNullOrEmpty(hinhAnhPath))
-            {
-               
-                string imagesDirectory = Path.Combine(Application.StartupPath, "Images");
-                if (!Directory.Exists(imagesDirectory))
+                int sanPhamID = Convert.ToInt32(dataGridView1.CurrentRow.Cells["SanPhamID"].Value);
+                string tenSanPham = textBox1.Text;
+                string loaiSanPham = textBox2.Text;
+                if (!decimal.TryParse(textBox3.Text, out decimal giaBan))
                 {
-                    Directory.CreateDirectory(imagesDirectory);
+                    MessageBox.Show("Giá bán không hợp lệ.");
+                    return;
                 }
-                string fileName = Path.GetFileName(hinhAnhPath);
-                string destPath = Path.Combine(imagesDirectory, fileName);
-                File.Copy(hinhAnhPath, destPath, true);
+                string mauSac = textBox4.Text;
+                string kichThuoc = textBox6.Text;
+                if (!int.TryParse(textBox5.Text, out int soLuongTon))
+                {
+                    MessageBox.Show("Số lượng tồn không hợp lệ.");
+                    return;
+                }
+                int khoHangID = Convert.ToInt32(comboBox1.SelectedValue);
 
-              
-                relativePath = Path.Combine("Images", fileName);
+                string relativePath;
+                if (!string.IsNullOrEmpty(hinhAnhPath))
+                {
+                    string imagesDirectory = Path.Combine(Application.StartupPath, "Images");
+                    if (!Directory.Exists(imagesDirectory))
+                    {
+                        Directory.CreateDirectory(imagesDirectory);
+                    }
+                    string fileName = Path.GetFileName(hinhAnhPath);
+                    string destPath = Path.Combine(imagesDirectory, fileName);
+                    File.Copy(hinhAnhPath, destPath, true);
+
+                    relativePath = Path.Combine("Images", fileName);
+                }
+                else
+                {
+                    relativePath = dataGridView1.CurrentRow.Cells["HinhAnh"].Value.ToString();
+                }
+
+                string query = $"UPDATE SanPham SET TenSanPham = N'{tenSanPham}', LoaiSanPham = N'{loaiSanPham}', GiaBan = {giaBan}, MauSac = N'{mauSac}', " +
+                               $"KichThuoc = N'{kichThuoc}', KhoHangID = {khoHangID}, SoLuongTon = {soLuongTon}, HinhAnh = N'{relativePath}' " +
+                               $"WHERE SanPhamID = {sanPhamID}";
+
+                dal.ExecuteNonQuery(query); // Thực hiện truy vấn
+                MessageBox.Show("Sửa Sản phẩm thành công ", "Thông báo");
+                LoadData();
+                ClearFields();
             }
-            else
+            catch (Exception ex)
             {
-       
-                relativePath = dataGridView1.CurrentRow.Cells["HinhAnh"].Value.ToString();
+                MessageBox.Show("Lỗi: " + ex.Message);
             }
-
-            string query = $"UPDATE SanPham SET TenSanPham = N'{tenSanPham}', LoaiSanPham = N'{loaiSanPham}', GiaBan = {giaBan}, MauSac = N'{mauSac}', " +
-                           $"KichThuoc = N'{kichThuoc}', KhoHangID = {khoHangID}, SoLuongTon = {soLuongTon}, HinhAnh = N'{relativePath}' " +
-                           $"WHERE SanPhamID = {sanPhamID}";
-            dal.ExecuteNonQuery(query);
-            MessageBox.Show("Sửa Sản phẩm thành công ", "Thông báo");
-            LoadData();
-            ClearFields();
+            finally
+            {
+                dal.closeConnect(); 
+            }
         }
 
         private void pictureBox1_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -195,22 +219,34 @@ namespace QuanLyCuaHangBanXeDap
                 return;
             }
 
-            int sanPhamID = Convert.ToInt32(dataGridView1.CurrentRow.Cells["SanPhamID"].Value);
-            string hinhAnh = dataGridView1.CurrentRow.Cells["HinhAnh"].Value.ToString();
-
-            string query = $"DELETE FROM SanPham WHERE SanPhamID = {sanPhamID}";
-            dal.ExecuteNonQuery(query);
-
-       
-            string imagePath = Path.Combine(Application.StartupPath, hinhAnh);
-            if (File.Exists(imagePath))
+            try
             {
-                File.Delete(imagePath);
-            }
-            MessageBox.Show("Xóa Sản phẩm thành công ", "Thông báo");
+                dal.openConnect();
 
-            LoadData();
-            ClearFields();
+                int sanPhamID = Convert.ToInt32(dataGridView1.CurrentRow.Cells["SanPhamID"].Value);
+                string hinhAnh = dataGridView1.CurrentRow.Cells["HinhAnh"].Value.ToString();
+
+                string query = $"DELETE FROM SanPham WHERE SanPhamID = {sanPhamID}";
+                dal.ExecuteNonQuery(query); 
+
+                string imagePath = Path.Combine(Application.StartupPath, hinhAnh);
+                if (File.Exists(imagePath))
+                {
+                    File.Delete(imagePath);
+                }
+
+                MessageBox.Show("Xóa Sản phẩm thành công ", "Thông báo");
+                LoadData();
+                ClearFields();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi: " + ex.Message);
+            }
+            finally
+            {
+                dal.closeConnect(); 
+            }
         }
 
         private void button4_Click(object sender, EventArgs e)
