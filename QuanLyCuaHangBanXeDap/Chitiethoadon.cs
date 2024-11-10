@@ -25,6 +25,7 @@ namespace QuanLyCuaHangBanXeDap
 
         private void Chitiethoadon_Load(object sender, EventArgs e)
         {
+            
             LoadSanPhamToComboBox();
             loadlabel();
         }
@@ -247,7 +248,25 @@ namespace QuanLyCuaHangBanXeDap
         }
         void loadlabel()
         {
-           
+            try
+            {
+                string query = $@"
+            SELECT k.HoTen 
+            FROM HoaDon h
+            INNER JOIN KhachHang k ON h.KhachHangID = k.KhachHangID
+            WHERE h.HoaDonID = {hoaDonID}";
+
+                DataTable dt = kn.ExecuteQuery(query);
+
+                if (dt.Rows.Count > 0)
+                {
+                    label1.Text = " Khách Hàng: " + dt.Rows[0][0].ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải tên khách hàng: {ex.Message}");
+            }
         }
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
