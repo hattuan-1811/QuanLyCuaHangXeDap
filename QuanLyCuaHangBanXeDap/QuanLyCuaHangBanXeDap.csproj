@@ -46,11 +46,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Chitiethoadon.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Chitiethoadon.Designer.cs">
+      <DependentUpon>Chitiethoadon.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmNhanVien.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmNhanVien.Designer.cs">
       <DependentUpon>frmNhanVien.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HoaDon.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HoaDon.Designer.cs">
+      <DependentUpon>HoaDon.cs</DependentUpon>
     </Compile>
     <Compile Include="ketnoi.cs" />
     <Compile Include="KhoHang.cs">
@@ -67,8 +79,14 @@
     <Compile Include="Sanpham.Designer.cs">
       <DependentUpon>Sanpham.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Chitiethoadon.resx">
+      <DependentUpon>Chitiethoadon.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmNhanVien.resx">
       <DependentUpon>frmNhanVien.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HoaDon.resx">
+      <DependentUpon>HoaDon.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="KhoHang.resx">
       <DependentUpon>KhoHang.cs</DependentUpon>

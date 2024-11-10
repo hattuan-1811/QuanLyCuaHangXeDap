@@ -135,7 +135,7 @@ namespace QuanLyCuaHangBanXeDap
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count == 0)
+            if (dataGridView1.SelectedRows.Count <= 0)
             {
                 MessageBox.Show("Vui lòng chọn sản phẩm để sửa.");
                 return;

@@ -16,7 +16,7 @@ namespace QuanLyCuaHangBanXeDap
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new KhoHang());
+            Application.Run(new HoaDon());
         }
     }
 }
