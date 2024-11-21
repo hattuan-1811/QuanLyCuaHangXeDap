@@ -51,7 +51,7 @@ namespace QuanLyCuaHangBanXeDap
                 {
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        cmd.Parameters.AddWithValue("@TenTaiKhoan", tentk);
+                        cmd.Parameters.AddWithValue("@TenTaiKhoan",tentk);
                         cmd.Parameters.AddWithValue("@MatKhau", matkhau);
 
                         conn.Open();
