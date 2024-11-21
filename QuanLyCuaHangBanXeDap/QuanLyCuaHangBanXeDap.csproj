@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1001\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -109,6 +113,12 @@
     <Compile Include="Sanpham.Designer.cs">
       <DependentUpon>Sanpham.cs</DependentUpon>
     </Compile>
+    <Compile Include="thongke.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="thongke.Designer.cs">
+      <DependentUpon>thongke.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Chitiethoadon.resx">
       <DependentUpon>Chitiethoadon.cs</DependentUpon>
     </EmbeddedResource>
@@ -148,6 +158,10 @@
     <EmbeddedResource Include="Sanpham.resx">
       <DependentUpon>Sanpham.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="thongke.resx">
+      <DependentUpon>thongke.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

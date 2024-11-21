@@ -152,7 +152,7 @@ namespace QuanLyCuaHangBanXeDap
                 kn.openConnect();
                 int khachHangID = Convert.ToInt32(comboBox1.SelectedValue);
                 int nhanVienID = Convert.ToInt32(comboBox2.SelectedValue);
-                string ngayBan = dateTimePicker1.Value.ToString("yyyy-MM-dd");
+                string ngayBan = dateTimePicker1.Value.ToString("dd-MM-yyyy");
 
                 string query = $@"INSERT INTO HoaDon (KhachHangID, NhanVienID, NgayBan, TongTien)
                             VALUES ({khachHangID}, {nhanVienID}, '{ngayBan}', 0)";
@@ -261,6 +261,72 @@ namespace QuanLyCuaHangBanXeDap
             finally
             {
                 kn.closeConnect();
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            // Lấy khoảng thời gian từ 2 DateTimePicker
+            DateTime startDate = dateTimePicker2.Value.Date;
+            DateTime endDate = dateTimePicker3.Value.Date;
+
+            // Kiểm tra ngày bắt đầu và ngày kết thúc
+            if (startDate > endDate)
+            {
+                MessageBox.Show("Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                // Câu truy vấn sử dụng tham số
+                string query = @"
+            SELECT 
+                h.HoaDonID, 
+                k.HoTen AS KhachHang, 
+                nv.HoTen AS NhanVien, 
+                h.NgayBan, 
+                ISNULL(SUM(cthd.SoLuong * cthd.GiaBan), 0) AS TongTien
+            FROM 
+                HoaDon h
+            JOIN 
+                KhachHang k ON h.KhachHangID = k.KhachHangID
+            JOIN 
+                NhanVien nv ON h.NhanVienID = nv.NhanVienID
+            LEFT JOIN 
+                ChiTietHoaDon cthd ON h.HoaDonID = cthd.HoaDonID
+            WHERE 
+                h.NgayBan BETWEEN @StartDate AND @EndDate
+            GROUP BY 
+                h.HoaDonID, k.HoTen, nv.HoTen, h.NgayBan
+            ORDER BY 
+                h.NgayBan DESC";
+
+                // Sử dụng lớp ketnoi để thực hiện truy vấn
+                using (SqlConnection conn = kn.GetConnection())
+                {
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+
+                    // Thêm tham số
+                    adapter.SelectCommand.Parameters.AddWithValue("@StartDate", startDate);
+                    adapter.SelectCommand.Parameters.AddWithValue("@EndDate", endDate);
+
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+
+                    // Gắn dữ liệu vào DataGridView
+                    dataGridView1.DataSource = dataTable;
+
+                    // Kiểm tra nếu không có kết quả
+                    if (dataTable.Rows.Count == 0)
+                    {
+                        MessageBox.Show("Không tìm thấy hóa đơn nào trong khoảng thời gian này!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Có lỗi xảy ra: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

@@ -146,5 +146,20 @@ namespace QuanLyCuaHangBanXeDap
                 panelMain.AutoScroll = true;
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+            if (selectedButton != null)
+            {
+                selectedButton.BackColor = Color.Beige;
+            }
+
+            Button clickedButton = (Button)sender;
+            clickedButton.BackColor = Color.BurlyWood;
+            selectedButton = clickedButton;
+            panelMain.AutoScroll = false;
+            openChildForm(new thongke());
+        }
     }
 }

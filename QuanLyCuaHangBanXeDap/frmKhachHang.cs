@@ -21,7 +21,8 @@ namespace QuanLyCuaHangBanXeDap
         }
         private void LoadData()
         {
-            string query = "SELECT * FROM KhachHang";
+            db.openConnect();
+                string query = "SELECT * FROM KhachHang";
             DataTable dt = new DataTable();
 
             try
@@ -43,6 +44,10 @@ namespace QuanLyCuaHangBanXeDap
             {
                 MessageBox.Show("Lỗi: " + ex.Message);
             }
+            finally
+            {
+                db.closeConnect();
+            }
         }
         private void frmKhachHang_Load(object sender, EventArgs e)
         {
@@ -52,6 +57,7 @@ namespace QuanLyCuaHangBanXeDap
         private void button1_Click(object sender, EventArgs e)
         {
             // Thêm khách hàng
+        
             if (string.IsNullOrWhiteSpace(textBox1.Text))
             {
                 MessageBox.Show("Họ tên không được để trống!");
@@ -74,28 +80,38 @@ namespace QuanLyCuaHangBanXeDap
             try
             {
                 using (SqlConnection conn = db.GetConnection())
-                using (SqlCommand command = new SqlCommand(query, conn))
                 {
-                    command.Parameters.AddWithValue("@HoTen", textBox1.Text);
-                    command.Parameters.AddWithValue("@SoDienThoai", textBox2.Text);
-                    command.Parameters.AddWithValue("@DiaChi", textBox3.Text);
-                    command.Parameters.AddWithValue("@Email", textBox4.Text);
-
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
+                    if (conn.State == ConnectionState.Closed)
                     {
-                        MessageBox.Show("Thêm khách hàng thành công!");
-                        LoadData();
+                        conn.Open();
                     }
-                    else
+                    using (SqlCommand command = new SqlCommand(query, conn))
                     {
-                        MessageBox.Show("Thêm khách hàng thất bại!");
+                        command.Parameters.AddWithValue("@HoTen", textBox1.Text);
+                        command.Parameters.AddWithValue("@SoDienThoai", textBox2.Text);
+                        command.Parameters.AddWithValue("@DiaChi", textBox3.Text);
+                        command.Parameters.AddWithValue("@Email", textBox4.Text);
+
+                        int rowsAffected = command.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show("Thêm khách hàng thành công!");
+                            LoadData();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Thêm khách hàng thất bại!");
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Lỗi: " + ex.Message);
+            }
+            finally
+            {
+                db.closeConnect();
             }
         }
 
@@ -129,24 +145,30 @@ namespace QuanLyCuaHangBanXeDap
             try
             {
                 using (SqlConnection conn = db.GetConnection())
-                using (SqlCommand command = new SqlCommand(query, conn))
                 {
-                    command.Parameters.AddWithValue("@id", selectedKhachHangId);
-                    command.Parameters.AddWithValue("@HoTen", textBox1.Text);
-                    command.Parameters.AddWithValue("@SoDienThoai", textBox2.Text);
-                    command.Parameters.AddWithValue("@DiaChi", textBox3.Text);
-                    command.Parameters.AddWithValue("@Email", textBox4.Text);
-
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
+                    if (conn.State == ConnectionState.Closed)
                     {
-                        MessageBox.Show("Sửa Khách hàng thành công!");
-                        selectedKhachHangId = -1;
-                        LoadData();
+                        conn.Open();
                     }
-                    else
+                    using (SqlCommand command = new SqlCommand(query, conn))
                     {
-                        MessageBox.Show("Sửa Khách hàng thất bại!");
+                        command.Parameters.AddWithValue("@id", selectedKhachHangId);
+                        command.Parameters.AddWithValue("@HoTen", textBox1.Text);
+                        command.Parameters.AddWithValue("@SoDienThoai", textBox2.Text);
+                        command.Parameters.AddWithValue("@DiaChi", textBox3.Text);
+                        command.Parameters.AddWithValue("@Email", textBox4.Text);
+
+                        int rowsAffected = command.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show("Sửa Khách hàng thành công!");
+                            selectedKhachHangId = -1;
+                            LoadData();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Sửa Khách hàng thất bại!");
+                        }
                     }
                 }
             }
@@ -170,24 +192,30 @@ namespace QuanLyCuaHangBanXeDap
             try
             {
                 using (SqlConnection conn = db.GetConnection())
-                using (SqlCommand command = new SqlCommand(query, conn))
                 {
-                    command.Parameters.AddWithValue("@id", selectedKhachHangId);
-
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
+                    if (conn.State == ConnectionState.Closed)
                     {
-                        MessageBox.Show("Xoá khách hàng thành công!");
-                        selectedKhachHangId = -1;
-                        textBox1.Clear();
-                        textBox2.Clear();
-                        textBox3.Clear();
-                        textBox4.Clear();
-                        LoadData();
+                        conn.Open();
                     }
-                    else
+                    using (SqlCommand command = new SqlCommand(query, conn))
                     {
-                        MessageBox.Show("Xoá khách hàng thất bại!");
+                        command.Parameters.AddWithValue("@id", selectedKhachHangId);
+
+                        int rowsAffected = command.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show("Xoá khách hàng thành công!");
+                            selectedKhachHangId = -1;
+                            textBox1.Clear();
+                            textBox2.Clear();
+                            textBox3.Clear();
+                            textBox4.Clear();
+                            LoadData();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Xoá khách hàng thất bại!");
+                        }
                     }
                 }
             }
