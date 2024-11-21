@@ -64,7 +64,7 @@ namespace QuanLyCuaHangBanXeDap
 
                             // Chuyển đến form chính
                             this.Hide();
-                            dangky frm_Main = new dangky();
+                            main frm_Main = new main();
                             frm_Main.ShowDialog();
                             this.Close();
                         }
