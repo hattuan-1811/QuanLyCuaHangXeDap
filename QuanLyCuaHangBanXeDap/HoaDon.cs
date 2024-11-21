@@ -152,28 +152,27 @@ namespace QuanLyCuaHangBanXeDap
                 kn.openConnect();
                 int khachHangID = Convert.ToInt32(comboBox1.SelectedValue);
                 int nhanVienID = Convert.ToInt32(comboBox2.SelectedValue);
-                string ngayBan = dateTimePicker1.Value.ToString("dd-MM-yyyy");
+                string ngayBan = dateTimePicker1.Value.ToString("yyyy-MM-dd");
 
                 string query = $@"INSERT INTO HoaDon (KhachHangID, NhanVienID, NgayBan, TongTien)
-                            VALUES ({khachHangID}, {nhanVienID}, '{ngayBan}', 0)";
+                      VALUES ({khachHangID}, {nhanVienID}, '{ngayBan}', 0)";
 
                 kn.ExecuteNonQuery(query);
                 MessageBox.Show("Thêm hóa đơn thành công!", "Thông báo",
-                              MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadData();
                 ClearInputs();
-
             }
-
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi thêm hóa đơn: {ex.Message}", "Lỗi",
-                              MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
                 kn.closeConnect();
             }
+
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -191,7 +190,7 @@ namespace QuanLyCuaHangBanXeDap
                 int hoaDonID = Convert.ToInt32(dataGridView1.CurrentRow.Cells["HoaDonID"].Value);
                 int khachHangID = Convert.ToInt32(comboBox1.SelectedValue);
                 int nhanVienID = Convert.ToInt32(comboBox2.SelectedValue);
-                string ngayBan = dateTimePicker1.Value.ToString("dd-MM-yyyy");
+                string ngayBan = dateTimePicker1.Value.ToString("yyyy-MM-dd");
 
                 string query = $@"UPDATE HoaDon 
                             SET KhachHangID = {khachHangID},

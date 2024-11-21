@@ -124,7 +124,7 @@ namespace QuanLyCuaHangBanXeDap
         {
             try
             {
-                if (dataGridView1.SelectedRows.Count == 0)
+                if (dataGridView1.SelectedCells.Count == 0)
                 {
                     MessageBox.Show("Vui lòng chọn sản phẩm để xóa.");
                     return;
